@@ -16,25 +16,41 @@ def initialize_camera():
     p = subprocess.Popen(["python3.9", "main.py", str(os.getpid())])
     while True:
         try:
-            pass
+            sleep(1)
         except ChildStartedSignal:
-            print("registered")
-            signal.signal(signal.SIGUSR1, signal.SIG_DFL)  # Unregister the signal handler
             return p.pid
         except KeyboardInterrupt:
             exit()
 
 def start_recording(p: int):
     os.kill(p, signal.SIGTERM)
+    while True:
+        try:
+            sleep(1)
+        except ChildStartedSignal:
+            print("Started Recording")
+            break
+        except KeyboardInterrupt:
+            exit()
 
 def kill_camera(p: int):
     os.kill(p, signal.SIGTERM)
+    while True:
+        try:
+            sleep(1)
+        except ChildStartedSignal:
+            print("End Recording")
+            signal.signal(signal.SIGUSR1, signal.SIG_DFL)  # Unregister the signal handler
+            break
+        except KeyboardInterrupt:
+            exit()
     subprocess.call(["rfkill", "block", "bluetooth"])
 
 if __name__ == "__main__":
     print("Initializing Camera")
     pid = initialize_camera()
     print("initialized camera")
+    sleep(1)
     start_recording(pid)
     for i in range(5):
         sleep(1)

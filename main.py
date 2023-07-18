@@ -16,7 +16,7 @@ parent_pid = int(sys.argv[1])
 subprocess.call(["rfkill", "unblock", "bluetooth"])
 signal.signal(signal.SIGTERM, termination_handler)
 
-with WirelessGoPro(enable_wifi=False,sudo_password="7036841181") as gopro:
+with WirelessGoPro(enable_wifi=False,sudo_password="1qaz0plm") as gopro:
     print("Connected")
     os.kill(parent_pid, signal.SIGUSR1)
     print("Sent Connection Status")
@@ -30,6 +30,7 @@ with WirelessGoPro(enable_wifi=False,sudo_password="7036841181") as gopro:
             exit()
     print("Shutter ON")
     gopro.ble_command.set_shutter(shutter=Params.Toggle.ENABLE)
+    os.kill(parent_pid, signal.SIGUSR1)
     while True:
         try:
             sleep(1)
@@ -39,4 +40,5 @@ with WirelessGoPro(enable_wifi=False,sudo_password="7036841181") as gopro:
             exit()
     print("Shutter OFF")
     gopro.ble_command.set_shutter(shutter=Params.Toggle.DISABLE)
+    os.kill(parent_pid, signal.SIGUSR1)
 
