@@ -23,7 +23,7 @@ def enable_bluetooth():
 def initialize_camera():
     enable_bluetooth()
     handler = signal.signal(signal.SIGUSR1, child_started_handler)
-    p = subprocess.Popen(["python3.9", "main.py", str(os.getpid())])
+    p = subprocess.Popen(["python3.9", "/home/animesh/GoPro-Communication/main.py", str(os.getpid())])
     while True:
         try:
             sleep(1)
