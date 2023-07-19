@@ -3,6 +3,8 @@ import os
 from time import sleep
 import signal
 
+SUDO_PASSWORD = "animesh"
+
 class ChildStartedSignal(Exception):
     pass
 
@@ -10,8 +12,16 @@ def child_started_handler(signum, frame):
     raise ChildStartedSignal("Child process has started")
 
 
+def disable_bluetooth():
+    sudo_echo = subprocess.run(["echo", SUDO_PASSWORD], stdout=subprocess.PIPE)
+    subprocess.call(["sudo", "rfkill", "block", "bluetooth"], stdin=sudo_echo.stdout)
+
+def enable_bluetooth():
+    sudo_echo = subprocess.run(["echo", SUDO_PASSWORD], stdout=subprocess.PIPE)
+    subprocess.call(["sudo", "rfkill", "unblock", "bluetooth"], stdin=sudo_echo.stdout)
+
 def initialize_camera():
-    subprocess.call(["rfkill", "unblock", "bluetooth"])
+    enable_bluetooth()
     handler = signal.signal(signal.SIGUSR1, child_started_handler)
     p = subprocess.Popen(["python3.9", "main.py", str(os.getpid())])
     while True:
@@ -44,7 +54,7 @@ def kill_camera(p: int):
             break
         except KeyboardInterrupt:
             exit()
-    subprocess.call(["rfkill", "block", "bluetooth"])
+    disable_bluetooth()
 
 if __name__ == "__main__":
     print("Initializing Camera")

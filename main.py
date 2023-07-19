@@ -5,6 +5,8 @@ import os
 import signal
 import subprocess
 
+SUDO_PASSWORD = "animesh"
+
 class TerminationSignal(Exception):
     pass
 
@@ -13,10 +15,10 @@ def termination_handler(signum, frame):
 
 # Get parent process id from arguments
 parent_pid = int(sys.argv[1])
-subprocess.call(["rfkill", "unblock", "bluetooth"])
+
 signal.signal(signal.SIGTERM, termination_handler)
 
-with WirelessGoPro(enable_wifi=False,sudo_password="1qaz0plm") as gopro:
+with WirelessGoPro(enable_wifi=False,sudo_password=SUDO_PASSWORD) as gopro:
     print("Connected")
     os.kill(parent_pid, signal.SIGUSR1)
     print("Sent Connection Status")
