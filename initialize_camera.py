@@ -13,12 +13,10 @@ def child_started_handler(signum, frame):
 
 
 def disable_bluetooth():
-    sudo_echo = subprocess.run(["echo", SUDO_PASSWORD], stdout=subprocess.PIPE)
-    subprocess.call(["sudo", "rfkill", "block", "bluetooth"], stdin=sudo_echo.stdout)
+    os.system(f'echo "{SUDO_PASSWORD}\n" | sudo -S rfkill block bluetooth')
 
 def enable_bluetooth():
-    sudo_echo = subprocess.run(["echo", SUDO_PASSWORD], stdout=subprocess.PIPE)
-    subprocess.call(["sudo", "rfkill", "unblock", "bluetooth"], stdin=sudo_echo.stdout)
+    os.system(f'echo "{SUDO_PASSWORD}\n" | sudo -S rfkill unblock bluetooth')
 
 def initialize_camera():
     enable_bluetooth()
